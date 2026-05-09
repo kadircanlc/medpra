@@ -1,13 +1,15 @@
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:9.0-alpine AS build
 WORKDIR /app
 COPY backend/*.csproj ./
 RUN dotnet restore
 COPY backend/ ./
-RUN dotnet publish -c Release -o out
+RUN dotnet publish -c Release -o out --no-self-contained
 
-FROM mcr.microsoft.com/dotnet/aspnet:9.0
+FROM mcr.microsoft.com/dotnet/aspnet:9.0-alpine
 WORKDIR /app
 COPY --from=build /app/out .
 EXPOSE 8080
 ENV ASPNETCORE_URLS=http://+:8080
+ENV DOTNET_GCHeapHardLimit=400000000
+ENV DOTNET_GCConserveMemory=9
 ENTRYPOINT ["dotnet", "MedPra.Api.dll"]
