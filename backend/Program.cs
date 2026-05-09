@@ -36,7 +36,7 @@ builder.Services.AddAuthorization();
 var allowedOrigins = new List<string> { "http://localhost:3000" };
 var frontendUrl = builder.Configuration["Frontend:Url"];
 if (!string.IsNullOrEmpty(frontendUrl))
-    allowedOrigins.Add(frontendUrl);
+    allowedOrigins.AddRange(frontendUrl.Split(',', StringSplitOptions.RemoveEmptyEntries));
 
 builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend", policy =>
